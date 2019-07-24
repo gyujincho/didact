@@ -29,6 +29,7 @@
     "yargs": "^13.2.2"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.4.4"
+    "@babel/polyfill": "^7.4.4",
+    "@babel/runtime": "^7.5.5"
   }
 }

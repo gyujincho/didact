@@ -10,32 +10,43 @@ const stories = [
   { name: "Components and state", url: "http://bit.ly/2rE16nh" }
 ];
 
-const rootDom = document.getElementById("root")
+class Story extends Didact.Component {
+  constructor(props) {
+    super(props)
+    this.state = { likes: Math.ceil(Math.random() * 100) }
+  }
 
-function clock() {
-  const time = new Date().toLocaleTimeString()
-  return <h1>{time}</h1>
+  like = () => {
+    this.setState({
+      likes: this.state.likes + 1
+    })
+  }
+
+  render() {
+    const { name, url } = this.props;
+    const { likes } = this.state;
+    return (
+      <li>
+        <button onClick={this.like}>{likes}<b>❤️</b></button>
+        <a href={url}>{name}</a>
+      </li>
+    );
+  }
 }
 
-function storyElement({ name, url }) {
-  const likes = Math.ceil(Math.random() * 100);
-  return (
-    <li>
-      <button>{likes}❤️</button>
-      <a href={url}>{name}</a>
-    </li>
-  );
+class App extends Didact.Component {
+  render() {
+    return (
+      <div>
+        <h1>Didact Stories</h1>
+        <ul>
+          {this.props.stories.map(story => {
+            return <Story name={story.name} url={story.url} />
+          })}
+        </ul>
+      </div>
+    );
+  }
 }
 
-const getAppElement = () => <div>
-  <ul>
-    {stories.map(storyElement)}
-  </ul>
-  {clock()}
-</div>;
-
-
-setInterval(
-  () => Didact.render(getAppElement(), rootDom),
-  1000
-)
+Didact.render(<App stories={stories} />, document.getElementById("root"))
