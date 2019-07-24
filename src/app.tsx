@@ -10,7 +10,19 @@ const stories = [
   { name: "Components and state", url: "http://bit.ly/2rE16nh" }
 ];
 
-const appElement = <div><ul>{stories.map(storyElement)}</ul></div>;
+const rootDom = document.getElementById("root")
+
+function clock() {
+  const time = new Date().toLocaleTimeString()
+  return <h1>{time}</h1>
+}
+
+const getAppElement = () => <div>
+  <ul>
+    {stories.map(storyElement)}
+  </ul>
+  {clock()}
+</div>;
 
 function storyElement({ name, url }) {
   const likes = Math.ceil(Math.random() * 100);
@@ -22,4 +34,7 @@ function storyElement({ name, url }) {
   );
 }
 
-Didact.render(appElement, document.getElementById("root"));
+setInterval(
+  () => Didact.render(getAppElement(), rootDom),
+  1000
+)
