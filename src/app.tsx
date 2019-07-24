@@ -17,13 +17,6 @@ function clock() {
   return <h1>{time}</h1>
 }
 
-const getAppElement = () => <div>
-  <ul>
-    {stories.map(storyElement)}
-  </ul>
-  {clock()}
-</div>;
-
 function storyElement({ name, url }) {
   const likes = Math.ceil(Math.random() * 100);
   return (
@@ -33,6 +26,14 @@ function storyElement({ name, url }) {
     </li>
   );
 }
+
+const getAppElement = () => <div>
+  <ul>
+    {stories.map(storyElement)}
+  </ul>
+  {clock()}
+</div>;
+
 
 setInterval(
   () => Didact.render(getAppElement(), rootDom),

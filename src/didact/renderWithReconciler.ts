@@ -1,12 +1,12 @@
-import { DidactElement, TEXT_ELEMENT } from './didactElements';
-
-let rootInstance = null
+import { DidactElement, TEXT_ELEMENT } from './didactElements'
 
 interface DidactInstance {
   dom: HTMLElement | Text;
   element: DidactElement;
   childInstances: DidactInstance[];
 }
+
+let rootInstance: DidactInstance | null = null
 
 const isEvent = propName => propName.startsWith('on')
 const isAttribute = propName => !isEvent(propName) && propName !== 'children'
