@@ -1,7 +1,7 @@
 import { DidactElement, TEXT_ELEMENT } from './didactElements';
 
 const isListener = propName => propName.startsWith('on')
-const isAttribute = propName => !propName.isListener(propName) && propName !== 'children'
+const isAttribute = propName => !isListener(propName) && propName !== 'children'
 
 export function render(element: DidactElement, parentDom: HTMLElement) {
   const { type, props } = element
