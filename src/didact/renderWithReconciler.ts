@@ -8,8 +8,40 @@ interface DidactInstance {
   childInstances: DidactInstance[];
 }
 
-const isListener = propName => propName.startsWith('on')
-const isAttribute = propName => !isListener(propName) && propName !== 'children'
+const isEvent = propName => propName.startsWith('on')
+const isAttribute = propName => !isEvent(propName) && propName !== 'children'
+
+function updateDomProperties(dom, prevProps, nextProps) {
+  /** Remove Attributes */
+  Object.keys(prevProps)
+    .filter(isAttribute)
+    .forEach(propName => {
+      dom[propName] = null
+    })
+
+  /** Remove Event Listeners */
+  Object.keys(prevProps)
+    .filter(isEvent)
+    .forEach(propName => {
+      const eventType = propName.toLowerCase().substring(2) // Remove 'on'
+      dom.removeEventListener(eventType, prevProps[propName])
+    })
+
+  /** Set Attributes */
+  Object.keys(nextProps)
+    .filter(isAttribute)
+    .forEach(propName => {
+      dom[propName] = nextProps[propName]
+    })
+
+  /** Set Event Listeners */
+  Object.keys(nextProps)
+    .filter(isEvent)
+    .forEach(propName => {
+      const eventType = propName.toLowerCase().substring(2) // Remove 'on'
+      dom.addEventListener(eventType, nextProps[propName])
+    })
+}
 
 function instantiate(element: DidactElement): DidactInstance {
   const { type, props } = element
@@ -20,20 +52,7 @@ function instantiate(element: DidactElement): DidactInstance {
     ? document.createTextNode('')
     : document.createElement(type)
 
-  /** Set Attributes */
-  Object.keys(props)
-    .filter(isAttribute)
-    .forEach(propName => {
-      dom[propName] = props[propName]
-    })
-
-  /** Set Event Listeners */
-  Object.keys(props)
-    .filter(isListener)
-    .forEach(propName => {
-      const eventType = propName.toLowerCase().substring(2) // Remove 'on'
-      dom.addEventListener(eventType, props[propName])
-    })
+  updateDomProperties(dom, [], props)
 
   /** Instantiate and append children */
   const { children = [] } = props
