@@ -68,7 +68,10 @@ function instantiate(element: DidactElement): DidactInstance {
   }
 }
 
-function reconcileChildren(instance, element) {
+function reconcileChildren(
+  instance: DidactInstance,
+  element: DidactElement
+): DidactInstance[] {
   const dom = instance.dom
   const childInstances = instance.childInstances
   const nextChildElements = element.props.children || []
@@ -79,23 +82,26 @@ function reconcileChildren(instance, element) {
   for (let i = 0; i < count; i++) {
     const childInstance = childInstances[i]
     const childElement = nextChildElements[i]
-    const newChildInstance = reconcile(dom, childInstance, childElement)
+    const newChildInstance = reconcile(dom as HTMLElement, childInstance, childElement)
     newChildInstances.push(newChildInstance)
   }
 
-  return newChildInstances
+  return newChildInstances.filter(instance => instance !== null)
 }
 
 function reconcile(
   parentDom: HTMLElement,
   instance: DidactInstance,
   element: DidactElement
-) {
+): DidactInstance | null {
   if (instance === null) {
     /** Create instance */
     const newInstance = instantiate(element)
     parentDom.appendChild(newInstance.dom)
     return newInstance
+  } else if (element === null) {
+    parentDom.removeChild(instance.dom)
+    return null
   } else if (instance.element.type === element.type) {
     /** Update instance */
     updateDomProperties(instance.dom, instance.element.props, element.props)
@@ -110,7 +116,7 @@ function reconcile(
   }
 }
 
-export function render(element, container) {
+export function render(element: DidactElement, container: HTMLElement) {
   const prevInstance = rootInstance
   const nextInstance = reconcile(container, prevInstance, element)
   rootInstance = nextInstance
